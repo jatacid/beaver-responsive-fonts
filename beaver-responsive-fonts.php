@@ -5,7 +5,7 @@ Plugin Name: Beaver Responsive Fonts
 Plugin URI: https://j7digital.com
 Description: Changes Beaver Builder Theme (or child theme) to have font settings scale on a perfect ratio instead of pixels.
 Author: J7Digital
-Version: 1.00
+Version: 1.1
 Author URI: https://j7digital.com
 License: GPLv2 or later
 
@@ -22,9 +22,49 @@ GNU General Public License for more details.
 
 
 
+//Updater Class
+if (!function_exists( 'github_plugin_updater_test_init' )) {
+function github_plugin_updater_test_init() {
+// ... proceed to declare your function
+include_once 'updater.php';
+define( 'WP_GITHUB_FORCE_UPDATE', true );
+}
+}
+add_action( 'init', 'github_plugin_updater_test_init' );
 
 
-function change_customizer_defaults($wp_customize) {
+
+function responsive_fonts_updater() {
+  if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+$login = 'jatacid/beaver-responsive-fonts';
+
+    $config = array(
+      'slug' => plugin_basename( __FILE__ ),
+      'proper_folder_name' => 'beaver-responsive-fonts',
+      'api_url' => 'https://api.github.com/repos/' . $login,
+      'raw_url' => 'https://raw.github.com/' . $login .'/master',
+      'github_url' => 'https://github.com/'. $login,
+      'zip_url' => 'https://github.com/'. $login .'/archive/master.zip',
+      'sslverify' => true,
+      'requires' => '3.0',
+      'tested' => '3.3',
+      'readme' => 'README.md',
+      'access_token' => '',
+    );
+    new WP_GitHub_Updater( $config );
+}
+}
+add_action( 'init', 'responsive_fonts_updater' );
+
+
+
+
+
+function brf_change_customizer_defaults($wp_customize) {
+
+//checks for BB-theme
+$theme = wp_get_theme();
+if ('bb-theme' == $theme->name || 'Beaver Builder Theme' == $theme->parent_theme) {
 
 //$wp_customize->remove_section('fl-heading-font');
 //$wp_customize->remove_panel('fl-h1-font-size');
@@ -43,13 +83,13 @@ $wp_customize->remove_control('fl-h4-line-height');
 $wp_customize->remove_control('fl-h5-line-height');
 $wp_customize->remove_control('fl-h6-line-height');
 
-$wp_customize->remove_control('fl-h1-letter-spacing');
-$wp_customize->remove_control('fl-h2-letter-spacing');
-$wp_customize->remove_control('fl-h3-letter-spacing');
-$wp_customize->remove_control('fl-h4-letter-spacing');
-$wp_customize->remove_control('fl-h5-letter-spacing');
-$wp_customize->remove_control('fl-h6-letter-spacing');
-
+// $wp_customize->remove_control('fl-h1-letter-spacing');
+// $wp_customize->remove_control('fl-h2-letter-spacing');
+// $wp_customize->remove_control('fl-h3-letter-spacing');
+// $wp_customize->remove_control('fl-h4-letter-spacing');
+// $wp_customize->remove_control('fl-h5-letter-spacing');
+// $wp_customize->remove_control('fl-h6-letter-spacing');
+}
 
 // $mods = FLCustomizer::get_mods();
 // $vars = array();
@@ -115,12 +155,13 @@ $wp_customize->remove_control('fl-h6-letter-spacing');
     'type' => 'select',
     'choices' => array(
       'option-1' => 'Golden Ratio (Big & Beautiful)',
-      'option-2' => 'Perfect Fifth (Less dramatic)'),
+      'option-2' => 'Perfect Fifth (Less dramatic)',
+    'option-3' => 'Perfect Fourth (Even Less Scaled)'),
     )
   );
 
 }
-add_action( 'customize_register', 'change_customizer_defaults', 99);
+add_action( 'customize_register', 'brf_change_customizer_defaults', 99);
 
 
 
@@ -143,14 +184,14 @@ function beaver_responsive_fonts_do_css(){
 
  $settings =  FLCustomizer::get_mods();
  $settings_min = $settings['fl_responsive_font_minimum'];
-    if ($settings_min !== false ){
+    if ($settings_min != false ){
         $settings_min = $settings_min;
     } else{
     	$settings_min = '14';
     }
 
   $settings_max = $settings['fl_responsive_font_maximum'];
-    if ($settings_max !== false ){
+    if ($settings_max != false ){
         $settings_max = $settings_max;
     } else{
     	$settings_max = '18';
@@ -159,7 +200,7 @@ function beaver_responsive_fonts_do_css(){
 
 
  $settings_ratio = $settings['fl_responsive_font_ratio'];
-    if ($settings_ratio !== false){
+    if ($settings_ratio != false){
         $settings_ratio = $settings_ratio;
     } else{
         $settings_ratio = 'option-1';
@@ -176,7 +217,7 @@ $settings_ratio = array(
 'h6' => '0.618',
 'p' => '1.0',
 );
-} else {
+} elseif ($settings_ratio == 'option-2') {
 //Perfect Fifth Ratio
 $settings_ratio = array(
 'h1' => '5.063',
@@ -187,7 +228,19 @@ $settings_ratio = array(
 'h6' => '0.667',
 'p' => '1.0',
 );
+}else {
+//Perfect Fourth Ratio
+$settings_ratio = array(
+'h1' => '2.441',
+'h2' => '1.953',
+'h3' => '1.563',
+'h4' => '1.25',
+'h5' => '1.0',
+'h6' => '0.8',
+'p' => '1.0',
+);
 }
+
 
 echo '<style type="text/css">';
 include_once('beaver-responsive-fonts.css.php');
