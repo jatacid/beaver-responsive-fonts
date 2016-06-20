@@ -5,7 +5,7 @@ Plugin Name: Beaver Responsive Fonts
 Plugin URI: https://j7digital.com
 Description: Changes Beaver Builder Theme (or child theme) to have font settings scale on a perfect ratio instead of pixels.
 Author: J7Digital
-Version: 1.1
+Version: 1.2
 Author URI: https://j7digital.com
 License: GPLv2 or later
 
@@ -209,35 +209,36 @@ function beaver_responsive_fonts_do_css(){
 if ($settings_ratio == 'option-1'){
 //Golden Ratio
 $settings_ratio = array(
-'h1' => '6.854',
-'h2' => '4.236',
-'h3' => '2.618',
-'h4' => '1.618',
-'h5' => '1.0',
-'h6' => '0.618',
+'h1' => '4.236',
+'h2' => '2.618',
+'h3' => '1.618',
+'h4' => '1.0',
 'p' => '1.0',
+'h5' => '0.618',
+'h6' => '0.382',
 );
 } elseif ($settings_ratio == 'option-2') {
 //Perfect Fifth Ratio
 $settings_ratio = array(
-'h1' => '5.063',
-'h2' => '3.375',
-'h3' => '2.25',
-'h4' => '1.5',
-'h5' => '1.0',
-'h6' => '0.667',
+'h1' => '3.375',
+'h2' => '2.25',
+'h3' => '1.5',
+'h4' => '1.0',
 'p' => '1.0',
+'h5' => '0.667',
+'h6' => '0.444',
+
 );
 }else {
 //Perfect Fourth Ratio
 $settings_ratio = array(
-'h1' => '2.441',
-'h2' => '1.953',
-'h3' => '1.563',
-'h4' => '1.25',
-'h5' => '1.0',
-'h6' => '0.8',
+'h1' => '2.369',
+'h2' => '1.777',
+'h3' => '1.333',
+'h4' => '1.0',
 'p' => '1.0',
+'h5' => '0.75',
+'h6' => '0.563',
 );
 }
 
